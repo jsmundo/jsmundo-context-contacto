@@ -1,24 +1,19 @@
-// Home.js
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import { Card } from "../component/Card";
+
 import { Link } from "react-router-dom";
+import { ContactCard } from "../component/contactCard";
 
 export const Home = () => {
   const { store } = useContext(Context);
 
   return (
     <div className="container my-5">
-      <div className="d-flex justify-content-end mb-3">
-        <Link className="btn btn-primary" to="/add-contact">
-          Add New Contact
-        </Link>
-      </div>
-      <ul className="list-group">
-        {store.contacts.map((contact) => (
-          <Card key={contact.id} contact={contact} />
-        ))}
-      </ul>
+      <h1>esta es mi home</h1>
+      <ContactCard/>
+      <Link to="/editcontact">
+        <button className="btn btn-success"> Edit Contact </button>
+      </Link>
     </div>
   );
 };

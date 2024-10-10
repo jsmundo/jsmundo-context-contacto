@@ -1,15 +1,17 @@
 
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Home } from "./views/Home";
-import { AddContact } from "./views/AddContact";
-import { EditContact } from "./views/EditContact";
-import { Demo } from "./views/Demo";
-import { Single } from "./views/Single";
+import { Home } from "./views/home";
+
+import { Demo } from "./views/demo";
+import { Single } from "./views/single";
 import injectContext from "./store/appContext";
 
-import { Navbar } from "./component/Navbar";
-import { Footer } from "./component/Footer";
+import { Navbar } from "./component/navbar";
+import{ContactCard} from "./component/contactCard";
+import { AddContact } from "./component/addContact";
+import { EditContact } from "./views/editContact";
+
 
 const Layout = () => {
   const basename = process.env.BASENAME || "";
@@ -20,13 +22,14 @@ const Layout = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/add-contact" element={<AddContact />} />
-          <Route path="/edit-contact/:id" element={<EditContact />} />
+          <Route path="/editcontact/:id" element={<EditContact />} /> 
+          <Route path="/contact/:id" element={<ContactCard />} /> 
+          <Route path="/addcontact" element={<AddContact />} /> 
           <Route path="/demo" element={<Demo />} />
           <Route path="/single/:index" element={<Single />} />
           <Route path="*" element={<h1>Not found!</h1>} />
         </Routes>
-        <Footer />
+      
       </BrowserRouter>
     </div>
   );

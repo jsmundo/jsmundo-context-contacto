@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import getState from "./flux.js";
 
@@ -20,7 +19,6 @@ const injectContext = (PassedComponent) => {
 
     useEffect(() => {
       // Llama a la acción para obtener los contactos al cargar la aplicación
-      state.actions.getContacts();
     }, []);
 
     return (
@@ -33,4 +31,3 @@ const injectContext = (PassedComponent) => {
 };
 
 export default injectContext;
-
