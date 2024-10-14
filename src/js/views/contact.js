@@ -1,16 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
 import { ContactCard } from "../component/contactCard";
 
-export const Home = () => {
+export const Contact = () => {
   const { store, actions } = useContext(Context);
   const [loading, setLoading] = useState(true); // Estado para manejar la carga
   const [error, setError] = useState(""); // Estado para manejar posibles errores
 
-  // Cargar contactos al montar el componente
   useEffect(() => {
     if (store.contacts.length === 0) {
+      // Si no hay contactos cargados, los cargamos
       actions
         .loadContacts()
         .then(() => {
@@ -24,39 +23,36 @@ export const Home = () => {
       setLoading(false); // Si los contactos ya están cargados, no necesitamos hacer fetch
     }
   }, [store.contacts, actions]);
-  console.log(store.contacts)
-  // Mostrar estado de carga
+
   if (loading) {
     return (
       <h1 className="d-flex justify-content-center">Loading contacts...</h1>
-    );
+    ); // Mostrar mientras carga
   }
 
-  // Mostrar error si ocurre
   if (error) {
     return (
       <h1 className="d-flex justify-content-center text-danger">{error}</h1>
-    );
+    ); // Mostrar error si ocurre
   }
 
-  // Si no hay contactos disponibles
   if (!store.contacts || store.contacts.length === 0) {
     return (
-      <h1 className="d-flex justify-content-center">No contacts available</h1>
+      <h1 className="d-flex justify-content-center blueColor">
+        <span className="whiteColor">&lt;</span>No contacts at the moment
+        <span className="whiteColor"></span>
+      </h1>
     );
   }
 
   return (
-    <div className="container my-5">
-      <h1 className="text-center">Contact List</h1>
-
+    <div className="container mb-5">
       <div className="row">
-        {store.contacts.map((contact) => (
-          <div className="" key={contact.id}>
-            <ContactCard contact={contact} />
-
-          </div>
-        ))}
+        <div className="col-md-8 mx-auto">
+          {store.contacts.map((contact) => (
+            <ContactCard key={contact.id} id={contact.id} />
+          ))}
+        </div>
       </div>
     </div>
   );

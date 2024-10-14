@@ -1,3 +1,17 @@
+const API_URL = "https://playground.4geeks.com/contact/agendas/";
+
+const apiRequest = (url, options = {}) => {
+  return fetch(url, options)
+    .then((response) => {
+      if (!response.ok) throw new Error(`Error: ${response.status}`);
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("API Error:", error);
+      throw error; // Lanzamos el error para que las promesas puedan manejarlo
+    });
+};
+
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
@@ -14,80 +28,80 @@ const getState = ({ getStore, getActions, setStore }) => {
           initial: "white",
         },
       ],
-      contact: [],
-      agenda: "alex_26",
+      agenda: "alex_28", 
     },
     actions: {
-      // ... acciones existentes
-      examplefunction: () => {
-        getActions().changeColor(0, "green");
-      },
-      getAgenda: () => {
+      loadContacts: () => {
         const { agenda } = getStore();
-        fetch(
-          `https://playground.4geeks.com/contact/agendas/${agenda}/contacts`
-        )
-          .then((Response) => Response.json())
-          .then((data) => setStore({ contact: data }))
-          .catch((error) => console.log(error));
+        return apiRequest(`${API_URL}${agenda}`) // Devolvemos la promesa
+          .then((data) => {
+            console.log(data)
+            setStore({ contacts: data });
+            return data; // Devolvemos los datos para poder manejarlos en los componentes
+          })
+          .catch((error) => {
+            console.log("Error loading contacts:", error);
+            throw error; // Lanzamos el error para manejarlo en los componentes
+          });
       },
+
       addContact: (contact) => {
-        const { agenda, contacts } = getState();
-        fetch(
-          `https://playground.4geeks.com/contact/agendas/${agenda}/contacts`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(contact),
-          }
-        )
-          .then((Response) => Response.json())
-          .then((data) => setStore({ contacts: [...contacts, data] }))
-          .then((error) => console.log(error));
+        const { agenda, contacts } = getStore();
+        return apiRequest(`${API_URL}${agenda}/contacts`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(contact),
+        })
+          .then((data) => {
+            setStore({ contacts: [...contacts, data] });
+            return data; // Devolvemos el nuevo contacto
+          })
+          .catch((error) => {
+            console.log("Error adding contact:", error);
+            throw error;
+          });
       },
+
       deleteContact: (id) => {
         const { agenda, contacts } = getStore();
-        fetch(
-          `https://playground.4geeks.com/contact/agendas/${agenda}/contacts/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-type": "application/json",
-            },
-          }
-        )
+        return apiRequest(`${API_URL}${agenda}/contacts/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-type": "application/json",
+          },
+        })
           .then(() => {
             const newContacts = contacts.filter((contact) => contact.id !== id);
             setStore({ contacts: newContacts });
           })
-          .catch((e) => {
-            console.log(e);
+          .catch((error) => {
+            console.log("Error deleting contact:", error);
+            throw error;
           });
       },
 
       updateContact: (id, updatedContact) => {
         const { agenda, contacts } = getStore();
-        fetch(
-          `https://playground.4geeks.com/contact/agendas/${agenda}/contacts/${id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedContact),
-          }
-        )
-          .then((response) => response.json())
+        return apiRequest(`${API_URL}${agenda}/contacts/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedContact),
+        })
           .then((data) => {
-            // Actualiza el estado del contacto modificado en el array de contactos
             const updatedContacts = contacts.map((contact) =>
-              contact.id === id ? data : contact
+              contact.id === id ? { ...contact, ...data } : contact
             );
             setStore({ contacts: updatedContacts });
+            return data; // Devolvemos el contacto actualizado
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            console.log("Error updating contact:", error);
+            throw error;
+          });
       },
 
       changeColor: (index, color) => {
@@ -103,3 +117,4 @@ const getState = ({ getStore, getActions, setStore }) => {
 };
 
 export default getState;
+
