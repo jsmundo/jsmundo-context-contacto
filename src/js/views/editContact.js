@@ -16,10 +16,6 @@ export const EditContact = () => {
      phone: "",
      address: "",
   });
-
-  //const [loading, setLoading] = useState(true);
-  //const [error, setError] = useState("");
-
   // Prellenar el formulario con los datos del contacto existente
   useEffect(() => {
    setContactDetails(store.contacts.find((contact) => contact.id === parseInt(id)))

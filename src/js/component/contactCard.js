@@ -6,9 +6,7 @@ import { Context } from "../store/appContext";
 export const ContactCard = ( contact ) => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate(); // Usar useNavigate para redireccionar
-  const [contactId, setContactId] = useState (null)
   
-
   // Función para eliminar contacto y redirigir después
   const handleDelete = () => {
     actions.deleteContact(contact.contacto.id);
@@ -19,8 +17,6 @@ export const ContactCard = ( contact ) => {
   return (
  
     <div>
-   
-  
     <div className="card mb-3">
       <div className="row g-0">
         <div className="col-md-4 d-flex justify-content align align-items-center">

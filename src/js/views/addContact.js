@@ -12,58 +12,21 @@ export const AddContact = () => {
     email: "",
     phone: "",
     address: "",
-    slug:"alex_31"
+    slug: "alex_31",
   });
-
-     const handleChange = (e) => {
-      setContact({...contact, [e.target.name]: e.target.value})
-     }
-
-     const handleSubmit = (e) => {
-        e.preventDefault(); 
-        
-         
-        actions.addContact(contact)
-      
-    
-         
-        navigate("/");
-     }
-  // // Función para guardar el contacto
-  // const onSave = () => {
-  //   // Validación simple para asegurarse de que los campos están completos
-  //   if (contact.name === "" || contact.email === "" || contact.phone === "" || contact.address === "") {
-  //     alert("Please fill in all the fields before saving.");
-  //     return;
-  //   } 
-  //   setLoading(true)
-    // Llama a la acción para agregar el contacto
-    // actions
-    //   .addContact({
-    //     name: contact.name,
-    //     email: contact.email,
-    //     phone: contact.phone,
-    //     address: contact.address,
-    //   })
-    //    .then(() => {
-    //   //   // Limpiar los campos después de guardar
-    //   //   setContact({
-    //   //     name: "",
-    //   //     email: "",
-    //   //     phone: "",
-    //   //     address: "",
-    //   //   });
-    //     setLoading (false); // desactivar estado de carga
-    //     // Redirigir a la lista de contactos después de agregar exitosamente
-    //   navigate("/");
-    //   })  
-  
+  const handleChange = (e) => {
+    setContact({ ...contact, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    actions.addContact(contact);
+    navigate("/");
+  };
   return (
     <div className="container-fluid min-vh-100 align-items-center bg-dark py-5">
       <div className="container d-flex flex-column bg-light my-5 pb-5 px-5">
         <h1 className="text-center mt-5">Add a new contact</h1>
         <form onSubmit={handleSubmit}>
-         
           <div className="form-group">
             <label>Full Name</label>
             <input
@@ -72,8 +35,7 @@ export const AddContact = () => {
               placeholder="Full Name"
               name="name"
               value={contact.name}
-              onChange={handleChange
-              }
+              onChange={handleChange}
             />
           </div>
           <div className="form-group">
@@ -84,8 +46,7 @@ export const AddContact = () => {
               placeholder="Enter email"
               name="email"
               value={contact.email}
-              onChange={handleChange
-              }
+              onChange={handleChange}
             />
           </div>
           <div className="form-group">
@@ -96,8 +57,7 @@ export const AddContact = () => {
               placeholder="Enter phone"
               name="phone"
               value={contact.phone}
-              onChange={handleChange
-              }
+              onChange={handleChange}
             />
           </div>
           <div className="form-group">
@@ -108,31 +68,25 @@ export const AddContact = () => {
               placeholder="Enter address"
               name="address"
               value={contact.address}
-              onChange={handleChange
-              }
+              onChange={handleChange}
             />
           </div>
-           <button
+          <button
             type="submit"
-      
             className="btn pt-1 mt-4 btn-primary form-control"
-            
           >
             save
-          </button> 
+          </button>
 
           <button
             type="button"
             onClick={() => navigate("/")}
             className="btn btn-primary mt-4"
           >
-             or get back to contacts
+            or get back to contacts
           </button>
-
         </form>
       </div>
     </div>
   );
 };
-
-
