@@ -18,7 +18,7 @@ const injectContext = (PassedComponent) => {
     );
 
     useEffect(() => {
-      // Llama a la acción para obtener los contactos al cargar la aplicación
+     state.actions.loadContacts()
     }, []);
 
     return (

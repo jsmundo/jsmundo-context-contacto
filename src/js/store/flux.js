@@ -1,109 +1,115 @@
-const API_URL = "https://playground.4geeks.com/contact/agendas/";
-
-const apiRequest = (url, options = {}) => {
-  return fetch(url, options)
-    .then((response) => {
-      if (!response.ok) throw new Error(`Error: ${response.status}`);
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("API Error:", error);
-      throw error; // Lanzamos el error para que las promesas puedan manejarlo
-    });
-};
-
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       contacts: [],
-      demo: [
-        {
-          title: "First Element",
-          background: "white",
-          initial: "white",
-        },
-        {
-          title: "Second Element",
-          background: "white",
-          initial: "white",
-        },
-      ],
-      agenda: "alex_28", 
+      contacto: {},
+      demo: [],
     },
     actions: {
       loadContacts: () => {
-        const { agenda } = getStore();
-        return apiRequest(`${API_URL}${agenda}`) // Devolvemos la promesa
+        const options = {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        };
+        fetch(
+          `https://playground.4geeks.com/contact/agendas/alex_31/contacts`,
+          options
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("la respuesta no fue exsitosa");
+            }
+            return response.json();
+          })
           .then((data) => {
-            console.log(data)
-            setStore({ contacts: data });
-            return data; // Devolvemos los datos para poder manejarlos en los componentes
+            console.log("RESPUESTA:", data.contacts);
+            setStore({ contacts: data.contacts });
           })
           .catch((error) => {
-            console.log("Error loading contacts:", error);
-            throw error; // Lanzamos el error para manejarlo en los componentes
+            console.error("hubo un problema con:", error);
           });
       },
-
-      addContact: (contact) => {
-        const { agenda, contacts } = getStore();
-        return apiRequest(`${API_URL}${agenda}/contacts`, {
-          method: "POST",
+      addContact: (newContact) => {
+        const options = {
+          method: "POST", // para enviar un nuevo contacto
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json", // digo estoy enviando datos en formato json
           },
-          body: JSON.stringify(contact),
-        })
+          body: JSON.stringify(newContact), // aqui estoy convirtiendo el objeto del nuevo contacto en el lenguaje que entiede el servidor json
+        };
+             fetch(
+          `https://playground.4geeks.com/contact/agendas/alex_31/contacts`,
+          options
+        )
+          .then((response) => {
+            if (!response.ok) {
+              // aqui le digo si las cosas no salen bien que mostraerme el error
+              throw new Error("No se pudo agregar el contacto");
+            }
+            return response.json(); // aqui le digo que me combierta la respuesta del servidor en json
+          })
           .then((data) => {
-            setStore({ contacts: [...contacts, data] });
-            return data; // Devolvemos el nuevo contacto
+            console.log("nuevo contacto agregado:", data); // mostramos el contacto que fue agrgado
+            const { contacts } = getStore(); // obtenemos la lista de contactos
+            setStore({ contacts: [...contacts, data] }); // aqui estamos  agregando un nuevo contacto
           })
           .catch((error) => {
-            console.log("Error adding contact:", error);
-            throw error;
+            console.error("Error al agregar el contacto", error); // mostramos el error si algo salio mal
           });
       },
 
-      deleteContact: (id) => {
-        const { agenda, contacts } = getStore();
-        return apiRequest(`${API_URL}${agenda}/contacts/${id}`, {
+      fetchDeleteContact: (id) => {
+        const { contacts } = getStore();
+        const newContact = contacts.filter((contact) => contact.id !== id); // borrar articulos de la lista
+        const myHeaders = new Headers();
+        myHeaders.append("accept", "application/json");
+        const requestOptions = {
           method: "DELETE",
-          headers: {
-            "Content-type": "application/json",
-          },
-        })
+          headers: myHeaders,
+        };
+        fetch(
+          `https://playground.4geeks.com/contact/agendas/alex_31/contacts/${id}`,
+          requestOptions
+        )
           .then(() => {
-            const newContacts = contacts.filter((contact) => contact.id !== id);
-            setStore({ contacts: newContacts });
+            setStore({ contacts: newContact });
+            getActions().loadContacts();
           })
-          .catch((error) => {
-            console.log("Error deleting contact:", error);
-            throw error;
-          });
+          .catch((error) => console.error(error));
       },
 
-      updateContact: (id, updatedContact) => {
-        const { agenda, contacts } = getStore();
-        return apiRequest(`${API_URL}${agenda}/contacts/${id}`, {
-          method: "PUT",
+      updateContact: (id, updatedContact,navigate) => {
+        const options = {
+          method: "PUT", // SE USA PARA ACTUILIZAR MIS CONTACTOS
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json", // indicamos que en viamos la informacion en formato json
           },
-          body: JSON.stringify(updatedContact),
-        })
+          body: JSON.stringify(updatedContact), // aqui se combierten los datos del contacto actulizado a json
+        };
+            fetch(
+          `https://playground.4geeks.com/contact/agendas/alex_31/contacts/${id}`,
+          options
+        )
+          .then((response) => {
+            if (!response.ok) {
+              // si algo no va bien
+              throw new Error("No se pudo actualizar el contacto");
+            }
+            return response.json(); // aqui estamos conviertiendo la respuesta en json
+          })
           .then((data) => {
+            console.log(`Contacto con ID ${id} actualizado`, data); // me muestra que enverdad fue actulizado
+            const { contacts } = getStore(); // obtengo la lista de contactos actual
             const updatedContacts = contacts.map((contact) =>
-              contact.id === id ? { ...contact, ...data } : contact
-            );
-            setStore({ contacts: updatedContacts });
-            return data; // Devolvemos el contacto actualizado
+              contact.id === id ? { ...contact, ...updatedContact } : contact
+            ); // aqui desimos que solo actualizamos el contacto con el id indicado
+            setStore({ contacts: updatedContacts }); // aqui guardamos la nueva lista actualizada
+            navigate("/")
           })
           .catch((error) => {
-            console.log("Error updating contact:", error);
-            throw error;
+            console.error("Error al actulizar el contacto:", error); // captamos el error si algo sale mal
           });
       },
-
       changeColor: (index, color) => {
         const store = getStore();
         const demo = store.demo.map((item, i) => {
@@ -117,4 +123,3 @@ const getState = ({ getStore, getActions, setStore }) => {
 };
 
 export default getState;
-
