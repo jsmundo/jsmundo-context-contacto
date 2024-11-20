@@ -12,7 +12,7 @@ export const AddContact = () => {
     email: "",
     phone: "",
     address: "",
-    slug: "alex_31",
+  
   });
   const handleChange = (e) => {
     setContact({ ...contact, [e.target.name]: e.target.value });
